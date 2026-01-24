@@ -1,4 +1,4 @@
-import { StyleSheet, Image, Text, View } from 'react-native'
+import { Image } from 'react-native'
 import { Tabs } from 'expo-router'
 import React from 'react'
 import homeIcon from '../../assets/icons/home.png';
@@ -38,6 +38,7 @@ const _layout = () => {
         name='index'
         options={{
             title: 'Home',
+            headerShown: false,
             tabBarIcon: ({focused}) => (
             <TabIcon focused={focused} icon={homeIcon}/>
 
@@ -49,6 +50,7 @@ const _layout = () => {
         name='search'
         options={{
             title: 'Search',
+            headerShown: false,
             tabBarIcon: ({focused}) => (
             <TabIcon focused={focused} icon={searchIcon}/>
 
@@ -61,5 +63,3 @@ const _layout = () => {
 }
 
 export default _layout
-
-const styles = StyleSheet.create({})

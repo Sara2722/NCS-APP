@@ -1,13 +1,17 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function search() {
   return (
-    <View>
+    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       <Text>search</Text>
-    </View>
+    </SafeAreaView>
   )
 }
 
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+})
