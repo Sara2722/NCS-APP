@@ -35,7 +35,7 @@ const _layout = () => {
         tabBarInactiveTintColor: 'rgba(255, 255, 255, 0.5)'
     }}>
     <Tabs.Screen 
-        name='index'
+        name='(home)'
         options={{
             title: 'Home',
             headerShown: false,

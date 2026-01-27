@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, Pressable, ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Image } from 'expo-image'
+import { router, Href } from 'expo-router'
 import TopBar from '@/components/TopBar'
 
 type Category = {
@@ -32,10 +33,18 @@ type CategoryGridProps = {
 }
 
 function CategoryGrid({ categories }: CategoryGridProps) {
+  const handleCategoryPress = (category: Category) => {
+    router.push(`/(home)/articles/${category.id}` as Href)
+  }
+
   return (
     <View className="flex-row flex-wrap justify-between px-4">
       {categories.map((category) => (
-        <CategoryCard key={category.id} category={category} />
+        <CategoryCard
+          key={category.id}
+          category={category}
+          onPress={() => handleCategoryPress(category)}
+        />
       ))}
     </View>
   )
@@ -55,7 +64,7 @@ const MOCK_CATEGORIES: Category[] = [
   { id: 10, label: 'Family & Society', image_url: 'https://picsum.photos/seed/family3/300/300' },
 ]
 
-export default function index() {
+export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.topSafeArea} edges={['top']} />
