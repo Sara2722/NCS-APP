@@ -1,6 +1,6 @@
 import { Text, View, Pressable, ScrollView, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useLocalSearchParams } from 'expo-router'
+import { useLocalSearchParams, useRouter } from 'expo-router'
 import TopBar from '@/components/TopBar'
 
 type Article = {
@@ -29,12 +29,14 @@ function ArticleButton({ article, onPress }: ArticleButtonProps) {
 
 type ArticlesListProps = {
   articles: Article[]
+  categoryId: string
 }
 
-function ArticlesList({ articles }: ArticlesListProps) {
+function ArticlesList({ articles, categoryId }: ArticlesListProps) {
+  const router = useRouter()
+
   const handleArticlePress = (article: Article) => {
-    // TODO: Navigate to article detail screen
-    console.log('Navigate to article:', article.slug)
+    router.push(`/(tabs)/(home)/articles/${categoryId}/${article.slug}`)
   }
 
   return (
@@ -146,7 +148,7 @@ export default function ArticlesScreen() {
           </Text>
         </View>
         <View className="mt-6">
-          <ArticlesList articles={categoryData.articles} />
+          <ArticlesList articles={categoryData.articles} categoryId={categoryId ?? ''} />
         </View>
       </ScrollView>
     </View>
