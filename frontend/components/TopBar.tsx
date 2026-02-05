@@ -22,13 +22,13 @@ export default function TopBar() {
   return (
     <View className='bg-[#FFDD00] h-[64px] flex flex-row items-center px-6 justify-between'>
       {/* Phone icon -> navigate to contact tab */} 
-      <Pressable onPress={() => router.push('/contact')}>
+      <Pressable onPress={() => router.push('/(tabs)/(home)/contact')}>
         <Image source={phoneIcon} className='h-8 w-8' resizeMode="contain" />
       </Pressable>
-        <Image source={logoIcon} className='h-[42px] w-auto' resizeMode="contain" />
-        <Pressable onPress={handleLogout}>
-          <Image source={logoutIcon} className='h-8 w-8' resizeMode="contain" />
-        </Pressable>
+      <Image source={logoIcon} className='h-[42px] w-auto' resizeMode="contain" />
+      <Pressable onPress={handleLogout}>
+        <Image source={logoutIcon} className='h-8 w-8' resizeMode="contain" />
+      </Pressable>
     </View>
   )
 }
