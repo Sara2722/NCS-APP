@@ -31,7 +31,7 @@ export default function ContactScreen() {
     <View style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
 
-      <SafeAreaView style={StyleSheet.topSafeArea} edges={["top"]} />
+      <SafeAreaView style={styles.topSafeArea} edges={["top"]} />
 
       {/*TopBar*/}
       <TopBar />
@@ -59,7 +59,7 @@ export default function ContactScreen() {
             <Pressable
               onPress={() =>
                 openURL(
-                  "support@nextchapterscotland.org.uk "
+                  "mailto: support@nextchapterscotland.org.uk "
                 )
               }
             >
@@ -153,13 +153,12 @@ export default function ContactScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+  },
+  topSafeArea: {
+    backgroundColor: '#FFDD00',
   },
   content: {
     flex: 1,
-  },
-  topSafeArea: {
-    backgroundColor: "FFDD00"
   },
   scrollContent: {
     paddingBottom: 20,
