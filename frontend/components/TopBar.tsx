@@ -3,6 +3,7 @@ import React from 'react'
 import phoneIcon from '@/assets/icons/phone.png';
 import logoIcon from '@/assets/icons/logo.png';
 import logoutIcon from '@/assets/icons/logout.png';
+import { router } from "expo-router";
 
 export default function TopBar() {
   const handleLogout = () => {
@@ -20,11 +21,14 @@ export default function TopBar() {
 
   return (
     <View className='bg-[#FFDD00] h-[64px] flex flex-row items-center px-6 justify-between'>
+      {/* Phone icon -> navigate to contact tab */} 
+      <Pressable onPress={() => router.push('/(tabs)/(home)/contact')}>
         <Image source={phoneIcon} className='h-8 w-8' resizeMode="contain" />
-        <Image source={logoIcon} className='h-[42px] w-auto' resizeMode="contain" />
-        <Pressable onPress={handleLogout}>
-          <Image source={logoutIcon} className='h-8 w-8' resizeMode="contain" />
-        </Pressable>
+      </Pressable>
+      <Image source={logoIcon} className='h-[42px] w-auto' resizeMode="contain" />
+      <Pressable onPress={handleLogout}>
+        <Image source={logoutIcon} className='h-8 w-8' resizeMode="contain" />
+      </Pressable>
     </View>
   )
 }
