@@ -7,7 +7,8 @@ import { StyleSheet,
 import { SafeAreaView } from 'react-native-safe-area-context'
 import React, { useMemo } from "react";
 import TopBar from '@/components/TopBar'
-import { useRouter, useLocalSearchParams } from "expo-router";
+import { Stack, useRouter, useLocalSearchParams } from "expo-router";
+
 
 type Item = {
     id: string;
@@ -35,37 +36,77 @@ const MOCK_ITEMS: Item[] = [
     },
 ]
 
-{/*}
+
 export default function search() {
   const router = useRouter();
-  const params = useLocalSearchParams
+  const params = useLocalSearchParams<{ q?: string }>();
+  const query = (params.q ?? "").toLowerCase();
 
-  const handleSubmit = () => {
-    const trimmed = query.trim();
-    if (!trimmed) return;
+  const filteredResults = useMemo(() => {
+    if (!query) return [];
+    return MOCK_ITEMS.filter(
+        (item) =>
+            item.title.toLowerCase().includes(query) ||
+            item.description.toLowerCase().includes(query)
+        
+    );
+  }, [query]);
 
-    Keyboard.dismiss();
-
-    router.push({
-      pathname: "/search/results",
-      params: { q: trimmed },
-    });
-  };
+  const renderItem = ({ item } : {item: Item }) => (
+    <Pressable
+        className="mb-3 rounded-xl border border-gray-300 p-3"
+        onPress={() => {
+            {/*later router.push('/articles/${item.id}') */}
+        }}
+    >
+        <Text className="font-semibold text-base mb-1">{item.title}</Text>
+        <Text className="text-xs text-gray-500" numberOfLines={2}>{item.description}</Text>
+    </Pressable>
+  );
   
   return (
-    <View style={styles.container}>
-      <SafeAreaView edges={['top']} style={styles.topSafeArea}/>
-      <TopBar />
-      <View 
-      style={styles.content} 
-      className="px-4 pt-4 pb-4 flex-1">
-        <Text className="text-2xl font-semibold mb-4 text-center text-black">Search Results</Text>
+    <>
+      <Stack.Screen options={{ headerShown: false }} />
+
+      <View style={styles.container}>
+        <SafeAreaView edges={['top']} style={styles.topSafeArea}/>
+        <TopBar />
+        <View 
+        style={styles.content} 
+        className="px-4 pt-4 pb-4 flex-1">
+          <Text className="text-2xl font-semibold mb-4 text-center text-black">Search Results</Text>
+
+
+        <View className="flex-1 px-4 pt-4 bg-white rounded-t-3xl">
+
+          {query === "" ? (
+              <View className="flex-1 items-center justify-center">
+                  <Text classname="text-gray-500">
+                      Nothing was typed, please go back and type something to search.
+                  </Text>
+                  <Text 
+                      className="text-blue-600"
+                      onPress={() => router.back()}
+                  >
+                      Try another search
+                  </Text>
+              </View>
+          ): (
+              <FlatList
+                  data={filteredResults}
+                  keyExtractor={(item) => item.id}
+                  renderItem={renderItem}
+                  contentContainerStyle={{ paddingBottom: 16 }}
+              />
+          )}
+          </View>
+        </View>
       </View>
-    </View>
+    </>
   );
 }
 
-*/}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
