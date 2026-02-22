@@ -47,7 +47,7 @@ const _layout = () => {
     />
 
     <Tabs.Screen 
-        name='search'
+        name='search/index'
         options={{
             title: 'Search',
             headerShown: false,
@@ -57,8 +57,14 @@ const _layout = () => {
             )
         }}
     />
-    </Tabs>
 
+    <Tabs.Screen
+        name="search/results"
+        options={{
+          href: null,
+        }}
+    />
+  </Tabs>
   )
 }
 
