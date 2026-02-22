@@ -2,11 +2,18 @@ import { Text, View, Pressable, ScrollView, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import TopBar from '@/components/TopBar'
+import articlesData from '@/data/articles.json'
 
 type Article = {
   id: string
   name: string
   slug: string
+}
+
+type CategoryData = {
+  name: string
+  description: string
+  articles: Article[]
 }
 
 type ArticleButtonProps = {
@@ -52,83 +59,18 @@ function ArticlesList({ articles, categoryId }: ArticlesListProps) {
   )
 }
 
-// Mock data - will be replaced with Webflow API data
-const MOCK_CATEGORY_DATA: Record<string, { name: string; description: string; articles: Article[] }> = {
-  '1': {
-    name: 'Work',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi...',
-    articles: [
-      { id: '1', name: 'Finding Employment', slug: 'finding-employment' },
-      { id: '2', name: 'Work Permits', slug: 'work-permits' },
-      { id: '3', name: 'Employee Rights', slug: 'employee-rights' },
-      { id: '4', name: 'Job Applications', slug: 'job-applications' },
-      { id: '5', name: 'Interview Tips', slug: 'interview-tips' },
-      { id: '6', name: 'Workplace Culture', slug: 'workplace-culture' },
-      { id: '7', name: 'Career Development', slug: 'career-development' },
-      { id: '8', name: 'Self Employment', slug: 'self-employment' },
-      { id: '9', name: 'Finding Employment', slug: 'finding-employment' },
-      { id: '10', name: 'Work Permits', slug: 'work-permits' },
-      { id: '11', name: 'Employee Rights', slug: 'employee-rights' },
-      { id: '12', name: 'Job Applications', slug: 'job-applications' },
-      { id: '13', name: 'Interview Tips', slug: 'interview-tips' },
-      { id: '14', name: 'Workplace Culture', slug: 'workplace-culture' },
-      { id: '15', name: 'Career Development', slug: 'career-development' },
-      { id: '16', name: 'Self Employment', slug: 'self-employment' },
-    ],
-  },
-  '2': {
-    name: 'Health',
-    description: 'Access healthcare services, understand your rights, and find support for physical and mental wellbeing. Information about NHS registration, GP services, and emergency care.',
-    articles: [
-      { id: '1', name: 'NHS Registration', slug: 'nhs-registration' },
-      { id: '2', name: 'Finding a GP', slug: 'finding-a-gp' },
-      { id: '3', name: 'Emergency Services', slug: 'emergency-services' },
-      { id: '4', name: 'Mental Health Support', slug: 'mental-health-support' },
-      { id: '5', name: 'Dental Care', slug: 'dental-care' },
-      { id: '6', name: 'Prescriptions', slug: 'prescriptions' },
-    ],
-  },
-  '3': {
-    name: 'Housing',
-    description: 'Find safe and affordable accommodation. Learn about your housing rights, how to apply for housing support, and what to do if you face homelessness.',
-    articles: [
-      { id: '1', name: 'Finding Accommodation', slug: 'finding-accommodation' },
-      { id: '2', name: 'Tenant Rights', slug: 'tenant-rights' },
-      { id: '3', name: 'Housing Benefits', slug: 'housing-benefits' },
-      { id: '4', name: 'Council Housing', slug: 'council-housing' },
-      { id: '5', name: 'Homelessness Support', slug: 'homelessness-support' },
-    ],
-  },
-  '4': {
-    name: 'Family & Society',
-    description: 'Support for families including childcare, education, and community integration. Learn about family reunification, schools, and social services.',
-    articles: [
-      { id: '1', name: 'Family Reunification', slug: 'family-reunification' },
-      { id: '2', name: 'Childcare Options', slug: 'childcare-options' },
-      { id: '3', name: 'School Enrollment', slug: 'school-enrollment' },
-      { id: '4', name: 'Community Groups', slug: 'community-groups' },
-      { id: '5', name: 'Social Services', slug: 'social-services' },
-      { id: '6', name: 'Language Classes', slug: 'language-classes' },
-    ],
-  },
-}
+const categoryArticles = articlesData.category_articles as Record<string, CategoryData>
 
-// Default fallback data
-const DEFAULT_CATEGORY = {
+const DEFAULT_CATEGORY: CategoryData = {
   name: 'Category',
-  description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi...',
-  articles: [
-    { id: '1', name: 'Article 1', slug: 'article-1' },
-    { id: '2', name: 'Article 2', slug: 'article-2' },
-    { id: '3', name: 'Article 3', slug: 'article-3' },
-  ],
+  description: '',
+  articles: [],
 }
 
 export default function ArticlesScreen() {
   const { categoryId } = useLocalSearchParams<{ categoryId: string }>()
 
-  // Get category data from mock or use default
-  const categoryData = MOCK_CATEGORY_DATA[categoryId ?? ''] ?? DEFAULT_CATEGORY
+  const categoryData = categoryArticles[categoryId ?? ''] ?? DEFAULT_CATEGORY
 
   return (
     <View style={styles.container}>
@@ -143,9 +85,11 @@ export default function ArticlesScreen() {
           <Text className="font-bold text-2xl text-black text-center">
             {categoryData.name}
           </Text>
-          <Text className="font-normal text-sm text-black text-center mt-4 leading-5">
-            {categoryData.description}
-          </Text>
+          {categoryData.description ? (
+            <Text className="font-normal text-sm text-black text-center mt-4 leading-5">
+              {categoryData.description}
+            </Text>
+          ) : null}
         </View>
         <View className="mt-6">
           <ArticlesList articles={categoryData.articles} categoryId={categoryId ?? ''} />

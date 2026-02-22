@@ -3,9 +3,11 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Image } from 'expo-image'
 import { router, Href } from 'expo-router'
 import TopBar from '@/components/TopBar'
+import articlesData from '@/data/articles.json'
 
 type Category = {
   id: number
+  slug: string
   label: string
   image_url: string
 }
@@ -18,12 +20,18 @@ type CategoryCardProps = {
 function CategoryCard({ category, onPress }: CategoryCardProps) {
   return (
     <Pressable onPress={onPress} className="w-[48%] aspect-square mb-4 overflow-hidden rounded-2xl">
-      <Image
-        source={{ uri: category.image_url }}
-        style={{ width: '100%', height: '100%' }}
-        contentFit="cover"
-        accessibilityLabel={category.label}
-      />
+      {category.image_url ? (
+        <Image
+          source={{ uri: category.image_url }}
+          style={{ width: '100%', height: '100%' }}
+          contentFit="cover"
+          accessibilityLabel={category.label}
+        />
+      ) : (
+        <View className="w-full h-full bg-[#FFDD00] items-center justify-center p-3">
+          <Text className="text-black text-lg font-bold text-center">{category.label}</Text>
+        </View>
+      )}
     </Pressable>
   )
 }
@@ -34,7 +42,7 @@ type CategoryGridProps = {
 
 function CategoryGrid({ categories }: CategoryGridProps) {
   const handleCategoryPress = (category: Category) => {
-    router.push(`/(home)/articles/${category.id}` as Href)
+    router.push(`/(home)/articles/${category.slug}` as Href)
   }
 
   return (
@@ -50,19 +58,7 @@ function CategoryGrid({ categories }: CategoryGridProps) {
   )
 }
 
-// Mock data - we will need to get this programatically from webflow cdn
-const MOCK_CATEGORIES: Category[] = [
-  { id: 1, label: 'Work', image_url: 'https://cdn.prod.website-files.com/65477d920c8996a7579a72bf/68e8e08c44f677337b5cd9b7_Work(1).png' },
-  { id: 2, label: 'Health', image_url: 'https://cdn.prod.website-files.com/65477d920c8996a7579a72bf/68e8e1cfc45c4d79d1815feb_Work(2).png' },
-  { id: 3, label: 'Housing', image_url: 'https://cdn.prod.website-files.com/65477d920c8996a7579a72bf/68e8e26cf789f0bd643ad01b_Work(3).png' },
-  { id: 4, label: 'Family & Society', image_url: 'https://cdn.prod.website-files.com/65477d920c8996a7579a72bf/68e8e26c5974d3bfb1b07f65_Work(4).png' },
-  { id: 5, label: 'Work', image_url: 'https://picsum.photos/seed/work2/300/300' },
-  { id: 6, label: 'Health', image_url: 'https://picsum.photos/seed/health2/300/300' },
-  { id: 7, label: 'Housing', image_url: 'https://picsum.photos/seed/housing2/300/300' },
-  { id: 8, label: 'Family & Society', image_url: 'https://picsum.photos/seed/family2/300/300' },
-  { id: 9, label: 'Housing', image_url: 'https://picsum.photos/seed/housing3/300/300' },
-  { id: 10, label: 'Family & Society', image_url: 'https://picsum.photos/seed/family3/300/300' },
-]
+const categories = articlesData.categories as Category[]
 
 export default function HomeScreen() {
   return (
@@ -80,7 +76,7 @@ export default function HomeScreen() {
             <Text className="text-2xl font-medium">Go to our Forum</Text>
           </View>
         </View>
-        <CategoryGrid categories={MOCK_CATEGORIES} />
+        <CategoryGrid categories={categories} />
       </ScrollView>
     </View>
   )
