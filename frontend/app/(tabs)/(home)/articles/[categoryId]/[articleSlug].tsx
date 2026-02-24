@@ -1,100 +1,212 @@
-import { Text, View, ScrollView, StyleSheet } from 'react-native'
+import { Text, View, ScrollView, StyleSheet, Linking, Pressable } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useLocalSearchParams } from 'expo-router'
+import { Image } from 'expo-image'
 import TopBar from '@/components/TopBar'
+import articlesData from '@/data/articles.json'
 
-// Mock article data - will be replaced with API data
-const MOCK_ARTICLES: Record<string, { name: string; content: string }> = {
-  'finding-employment': {
-    name: 'Finding Employment',
-    content: `The following information applies from the 1st April 2025.
+// types
 
-The information on this page reflects our understanding of the new rules and should not be taken as legal advice.
-
-We will be updating this information in line with Disclosure Scotland's guidance once it is published.
-
-Disclosure Scotland
-
-Disclosure Scotland is the Scottish Government agency responsible for conducting criminal record checks as part of the Protecting Vulnerable Groups (PVG) Scheme and the Disclosure levels.
-
-You may be asked to apply to become a PVG Scheme member when applying for a job or volunteering in a regulated role with Children and/or Protected Adults.
-
-The information on this page is designed to help you understand the PVG Scheme. If you require a different level of disclosure, please see our Disclosure Levels page.
-
-PVG Scheme
-
-What is the PVG scheme?
-
-The Protecting Vulnerable Groups (PVG) scheme is a government-run scheme in Scotland that helps to safeguard children and protected adults from harm. It does this by providing a criminal record check for people who want to work with these vulnerable groups.
-
-The PVG Scheme is governed by two pieces of legislation. The Disclosure (Scotland) Act 2020 and the Protection of Vulnerable Groups (Scotland) Act 2007.
-
-What is the purpose of the PVG scheme?
-
-The PVG scheme is an important safeguarding measure for protecting children and protected adults from harm. By conducting criminal record and other checks, the PVG scheme helps to ensure that only those who are suitable to work with these vulnerable groups are able to do so.
-
-Who manages the PVG scheme?
-
-The PVG scheme is managed by Disclosure Scotland.
-
-How do I apply for a PVG?
-
-Information on how to apply to the PVG scheme can be accessed on the Disclosure Scotland website.
-
-Who needs a PVG in Scotland?
-
-Anyone who wants to do a regulated role with children and/or protected adults in Scotland will need to join the PVG scheme.
-
-It is important to understand what counts as a regulated role because only then will you know whether you need to join the PVG scheme or not.
-
-Disclosure Scotland have created an online tool that should help you to work out whether your role needs PVG scheme membership.`,
-  },
-  'work-permits': {
-    name: 'Work Permits',
-    content: `Understanding Work Permits in the UK
-
-If you are not a UK citizen or do not have settled status, you may need a work permit or visa to work legally in the UK.
-
-Types of Work Visas
-
-There are several types of work visas available:
-
-Skilled Worker Visa
-This is the main visa for people coming to the UK for work. You need a job offer from an approved employer.
-
-Health and Care Worker Visa
-For qualified doctors, nurses, and other health professionals.
-
-Graduate Visa
-For international students who have completed a UK degree and want to work or look for work.
-
-Your Rights at Work
-
-Regardless of your immigration status, you have certain rights at work including:
-- The right to be paid at least the National Minimum Wage
-- Protection from discrimination
-- Safe working conditions
-- Rest breaks and holiday entitlement
-
-Getting Help
-
-If you need advice about work permits or your rights at work, you can contact:
-- Citizens Advice
-- ACAS (Advisory, Conciliation and Arbitration Service)
-- Your local refugee support organization`,
-  },
+type HeadingBlock = {
+  type: 'heading'
+  text: string
+  level: number
 }
 
-const DEFAULT_ARTICLE = {
-  name: 'Article',
-  content: 'Article content will be loaded from the API.',
+type ParagraphBlock = {
+  type: 'paragraph'
+  text: string
+  bold: boolean
 }
+
+type Segment = {
+  text: string
+  bold: boolean
+  link: string | null
+}
+
+type RichParagraphBlock = {
+  type: 'rich_paragraph'
+  segments: Segment[]
+}
+
+type ListBlock = {
+  type: 'list'
+  items: string[]
+  ordered: boolean
+}
+
+type ContentBlock = HeadingBlock | ParagraphBlock | RichParagraphBlock | ListBlock
+
+type SignpostingOrg = {
+  name: string
+  description: string
+  url: string
+  image_url: string
+}
+
+type ArticleData = {
+  id: string
+  title: string
+  category_slug: string
+  category_label: string
+  last_updated: string
+  content: ContentBlock[]
+  signposting: SignpostingOrg[]
+  source_url: string
+}
+
+// content Block Renderers
+
+function HeadingRenderer({ block }: { block: HeadingBlock }) {
+  const className =
+    block.level === 2
+      ? 'font-bold text-xl text-black mt-6 mb-2'
+      : block.level === 3
+        ? 'font-bold text-lg text-black mt-5 mb-2'
+        : 'font-semibold text-base text-black mt-4 mb-1'
+
+  return <Text className={className}>{block.text}</Text>
+}
+
+function ParagraphRenderer({ block }: { block: ParagraphBlock }) {
+  return (
+    <Text
+      className={`text-sm text-black leading-5 mb-3 ${block.bold ? 'font-bold' : 'font-normal'}`}
+    >
+      {block.text}
+    </Text>
+  )
+}
+
+function RichParagraphRenderer({ block }: { block: RichParagraphBlock }) {
+  const handleLinkPress = (url: string) => {
+    if (url.startsWith('http') || url.startsWith('mailto:') || url.startsWith('tel:')) {
+      Linking.openURL(url)
+    }
+  }
+
+  return (
+    <Text className="text-sm text-black leading-5 mb-3 font-normal">
+      {block.segments.map((segment, i) => {
+        if (segment.link) {
+          return (
+            <Text
+              key={i}
+              className={`text-blue-600 underline ${segment.bold ? 'font-bold' : 'font-normal'}`}
+              onPress={() => handleLinkPress(segment.link!)}
+            >
+              {segment.text}
+            </Text>
+          )
+        }
+        return (
+          <Text key={i} className={segment.bold ? 'font-bold' : 'font-normal'}>
+            {segment.text}
+          </Text>
+        )
+      })}
+    </Text>
+  )
+}
+
+function ListRenderer({ block }: { block: ListBlock }) {
+  return (
+    <View className="mb-3 pl-2">
+      {block.items.map((item, i) => (
+        <View key={i} className="flex-row mb-1.5">
+          <Text className="text-sm text-black mr-2 leading-5">
+            {block.ordered ? `${i + 1}.` : '•'}
+          </Text>
+          <Text className="text-sm text-black leading-5 flex-1 font-normal">{item}</Text>
+        </View>
+      ))}
+    </View>
+  )
+}
+
+function ContentBlockRenderer({ block }: { block: ContentBlock }) {
+  switch (block.type) {
+    case 'heading':
+      return <HeadingRenderer block={block} />
+    case 'paragraph':
+      return <ParagraphRenderer block={block} />
+    case 'rich_paragraph':
+      return <RichParagraphRenderer block={block} />
+    case 'list':
+      return <ListRenderer block={block} />
+    default:
+      return null
+  }
+}
+
+// signposting
+
+function SignpostingCard({ org }: { org: SignpostingOrg }) {
+  const handlePress = () => {
+    if (org.url) {
+      Linking.openURL(org.url)
+    }
+  }
+
+  return (
+    <Pressable onPress={handlePress} className="flex-row bg-gray-50 rounded-xl p-3 mb-3">
+      {org.image_url ? (
+        <Image
+          source={{ uri: org.image_url }}
+          style={{ width: 48, height: 48 }}
+          contentFit="contain"
+          className="rounded-lg mr-3"
+        />
+      ) : null}
+      <View className="flex-1">
+        <Text className="font-bold text-sm text-black">{org.name}</Text>
+        {org.description ? (
+          <Text className="text-xs text-gray-600 mt-1 leading-4" numberOfLines={3}>
+            {org.description}
+          </Text>
+        ) : null}
+      </View>
+    </Pressable>
+  )
+}
+
+function SignpostingSection({ orgs }: { orgs: SignpostingOrg[] }) {
+  if (orgs.length === 0) return null
+
+  return (
+    <View className="mt-6 pt-4 border-t border-gray-200">
+      <Text className="font-bold text-lg text-black mb-3">Signposting</Text>
+      <Text className="text-xs text-gray-500 mb-4">
+        The following organisations offer support on this topic.
+      </Text>
+      {orgs.map((org, i) => (
+        <SignpostingCard key={i} org={org} />
+      ))}
+    </View>
+  )
+}
+
+// main Screen
+
+const allArticles = articlesData.articles as Record<string, ArticleData>
 
 export default function ArticleScreen() {
   const { articleSlug } = useLocalSearchParams<{ articleSlug: string }>()
 
-  // Get article data from mock or use default
-  const articleData = MOCK_ARTICLES[articleSlug ?? ''] ?? DEFAULT_ARTICLE
+  const articleData = allArticles[articleSlug ?? '']
+
+  if (!articleData) {
+    return (
+      <View style={styles.container}>
+        <SafeAreaView style={styles.topSafeArea} edges={['top']} />
+        <TopBar />
+        <View className="flex-1 items-center justify-center px-6">
+          <Text className="text-lg text-gray-500">Article not found</Text>
+        </View>
+      </View>
+    )
+  }
 
   return (
     <View style={styles.container}>
@@ -107,40 +219,21 @@ export default function ArticleScreen() {
       >
         <View className="px-[25px] mt-3">
           <Text className="font-bold text-2xl text-black text-center">
-            {articleData.name}
+            {articleData.title}
           </Text>
+          {articleData.last_updated ? (
+            <Text className="text-xs text-gray-400 text-center mt-2">
+              Last updated: {articleData.last_updated}
+            </Text>
+          ) : null}
           <View className="mt-6">
-            <ArticleContent content={articleData.content} />
+            {articleData.content.map((block, index) => (
+              <ContentBlockRenderer key={index} block={block} />
+            ))}
           </View>
+          <SignpostingSection orgs={articleData.signposting} />
         </View>
       </ScrollView>
-    </View>
-  )
-}
-
-type ArticleContentProps = {
-  content: string
-}
-
-function ArticleContent({ content }: ArticleContentProps) {
-  // Split into paragraphs and render as regular text
-  const paragraphs = content.split('\n\n')
-
-  return (
-    <View>
-      {paragraphs.map((paragraph, index) => {
-        const trimmed = paragraph.trim()
-        if (!trimmed) return null
-
-        return (
-          <Text
-            key={index}
-            className="font-normal text-sm text-black leading-5 mb-4"
-          >
-            {trimmed}
-          </Text>
-        )
-      })}
     </View>
   )
 }
