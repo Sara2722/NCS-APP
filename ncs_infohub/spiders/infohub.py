@@ -138,7 +138,7 @@ class InfohubSpider(Spider):
 
             topic_article = Node(
                 article_title,
-                parent=topic,
+                topic,
                 article_absolute_url=article_absolute_url,
             )
             meta["topic_article"] = topic_article
@@ -189,7 +189,9 @@ class InfohubSpider(Spider):
             # to a login screen in the user's default browser
             if not "training-new" in button_relative_url:
                 topic_name = button_relative_url.replace("/", "")
-                topic = Node(topic_name, self.root)
+                topic = Node(
+                    topic_name, self.root, button_img_url=button_img_url
+                )
                 meta["topic"] = topic
 
                 yield Request(
