@@ -543,8 +543,8 @@ def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     project_root = os.path.dirname(script_dir)
 
-    source_path = os.path.join(project_root, "NCSInfoHubArticles.json")
-    output_path = os.path.join(script_dir, "output", "articles.json")
+    source_path = os.path.join(project_root, "scraper_output", "NCSInfoHubArticles.json")
+    output_path = os.path.join(script_dir, "caddy_serve", "articles.json")
 
     if not os.path.exists(source_path):
         print(f"Error: Source file not found at {source_path}")
