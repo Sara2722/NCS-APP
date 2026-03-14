@@ -465,7 +465,7 @@ def transform(source_path: str) -> dict:
         cat_label = CATEGORY_LABELS.get(
             cat_slug, cat_slug.replace("-", " ").title()
         )
-        cat_image = CATEGORY_IMAGES.get(cat_slug, "")
+        cat_image = category.get("button_img_url", "")
 
         # home screen category
         output["categories"].append({
