@@ -1,0 +1,9 @@
+[Unit]
+Description=Run article scripts hourly
+
+[Timer]
+OnCalendar=hourly
+Persistent=true
+
+[Install]
+WantedBy=timers.target

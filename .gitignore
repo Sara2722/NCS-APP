@@ -1,5 +1,6 @@
 # NCS scraper output
 NCSInfoHubArticles.json
+articles.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
