@@ -1,0 +1,16 @@
+[Unit]
+Description=NCS article scraper and transformer scheduled script
+After=network.target
+
+[Service]
+Type=oneshot
+User=api
+Group=api
+WorkingDirectory=/home/api/ncs_infohub
+ExecStart=/home/api/ncs_infohub/scrape_and_transform.sh
+StandardOutput=journal
+StandardError=journal
+TimeoutStartSec=20min
+
+[Install]
+WantedBy=multi-user.target

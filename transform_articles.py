@@ -541,9 +541,8 @@ def transform(source_path: str) -> dict:
 def main():
     # get paths
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    project_root = os.path.dirname(script_dir)
 
-    source_path = os.path.join(project_root, "scraper_output", "NCSInfoHubArticles.json")
+    source_path = os.path.join(script_dir, "scraper_output", "NCSInfoHubArticles.json")
     output_path = os.path.join(script_dir, "caddy_serve", "articles.json")
 
     if not os.path.exists(source_path):
