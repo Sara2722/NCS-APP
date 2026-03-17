@@ -4,6 +4,7 @@ This is a Python scrapy project to scrape the [NCS Information Hub](https://www.
 ## Development
 - Clone this repo and install requirements using `pip install -r requirements.txt`
 - To run the scraper, use `scrapy runspider ncs_infohub/spiders/infohub.py` this will output the scrape data, called `NCSInfoHubArticles.json` in your current directory.
+- To run the article transformer, use `python transform_articles.py`. It expects `NCSInfoHubArticles.json` to be in `scraper_output` and will output the final transformed articles, called `articles.json` into `caddy_serve`
 ## Deployment
 ### Copy code to server
 - Ensure you have `rsync` installed

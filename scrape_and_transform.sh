@@ -5,4 +5,4 @@ cd scraper_output &&
 scrapy runspider ../ncs_infohub/spiders/infohub.py &&
 cd ../caddy_serve &&
 python ../transform_articles.py &&
-cp -f ./caddy_serve/articles.json /var/www/api/
+cp -f articles.json /var/www/api/
