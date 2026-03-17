@@ -1,0 +1,39 @@
+# The Caddyfile is an easy way to configure your Caddy web server.
+#
+# Unless the file starts with a global options block, the first
+# uncommented line is always the address of your site.
+#
+# To use your own domain name (with automatic HTTPS), first make
+# sure your domain's A/AAAA DNS records are properly pointed to
+# this machine's public IP, then replace ":80" below with your
+# domain name.
+
+forum.nextchapterscotland.org.uk {
+        reverse_proxy unix//var/discourse/shared/standalone/nginx.http.sock {
+                transport http {
+                        # Discourse's nginx expects Host header
+                }
+        }
+}
+
+api.nextchapterscotland.org.uk {
+        @articles path == /articles.json
+
+        handle @articles {
+                root * /var/www/api
+                file_server
+
+                header Content-Type application/json
+                header Cache-Control "public, max-age=3600"
+        }
+
+        # Return 404 for all other paths
+        handle {
+                respond "Not Found" 404 {
+                        close
+                }
+        }
+}
+
+# Refer to the Caddy docs for more information:
+# https://caddyserver.com/docs/caddyfile
