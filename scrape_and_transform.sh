@@ -4,5 +4,4 @@ source .venv/bin/activate
 cd scraper_output &&
 scrapy runspider ../ncs_infohub/spiders/infohub.py &&
 cd ../caddy_serve &&
-python ../transform_articles.py &&
-cp -f articles.json /var/www/api/
+python ../transform_articles.py
