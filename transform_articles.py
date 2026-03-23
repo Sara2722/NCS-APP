@@ -14,21 +14,6 @@ from html.parser import HTMLParser
 
 # Constants
 
-
-# Known Webflow CDN image URLs
-# we should either scrape the rest or not show icons
-CATEGORY_IMAGES = {
-    "work": "https://cdn.prod.website-files.com/65477d920c8996a7579a72bf/68e8e08c44f677337b5cd9b7_Work(1).png",
-    "health": "https://cdn.prod.website-files.com/65477d920c8996a7579a72bf/68e8e1cfc45c4d79d1815feb_Work(2).png",
-    "housing": "https://cdn.prod.website-files.com/65477d920c8996a7579a72bf/68e8e26cf789f0bd643ad01b_Work(3).png",
-    "family-and-society": "https://cdn.prod.website-files.com/65477d920c8996a7579a72bf/68e8e26c5974d3bfb1b07f65_Work(4).png",
-    "money-matters": "",
-    "living-life": "",
-    "criminal-justice-system": "",
-    "defending-your-rights": "",
-    "for-professionals": "",
-}
-
 CATEGORY_LABELS = {
     "work": "Work",
     "health": "Health",
