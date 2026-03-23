@@ -7,6 +7,23 @@ from anytree import Node, NodeMixin, RenderTree
 from anytree.exporter.jsonexporter import JsonExporter
 
 
+class ContactUsPage(NodeMixin):
+    absolute_url: str
+    main_content: list[str]
+
+    def __init__(
+        self,
+        name: str,
+        parent: Node,
+        absolute_url: str,
+        main_content: list[str],
+    ):
+        self.name = name
+        self.parent = parent
+        self.absolute_url = absolute_url
+        self.main_content = main_content
+
+
 class ArticleItem(NodeMixin):
     name: str
     absolute_url: str
@@ -18,7 +35,7 @@ class ArticleItem(NodeMixin):
 
     def __init__(
         self,
-        parent,
+        parent: Node,
         article_absolute_url: str,
         title: str,
         last_updated: str,
@@ -54,10 +71,22 @@ class InfohubSpider(Spider):
         return spider
 
     async def start(self):
-        yield Request(
-            url="https://www.nextchapterscotland.org.uk/information-hub",
-            callback=self.parse_infohub_main_page,
-        )
+        start_reqs = [
+            Request(
+                url="https://www.nextchapterscotland.org.uk/information-hub",
+                callback=self.parse_infohub_main_page,
+            ),
+            Request(
+                url="https://www.nextchapterscotland.org.uk/contact",
+                callback=self.parse_contactus,
+            ),
+        ]
+        for s in start_reqs:
+            yield s
+
+    def parse_contactus(self, response: Response):
+        content = response.css(".w-richtext")[0].getall()
+        yield ContactUsPage("contact_us", self.root, response.url, content)
 
     def parse_article(self, response: Response):
         # Things to consider:
