@@ -29,6 +29,7 @@ CATEGORY_LABELS = {
 
 # Utilities
 
+
 def make_slug(name: str) -> str:
     # Convert name to URL-safe slug
     slug = name.lower().strip()
@@ -56,6 +57,7 @@ def clean_text(text: str) -> str:
 
 # HTML to Content Blocks Parser
 
+
 class ContentBlockParser(HTMLParser):
     """
     Parse Webflow-generated HTML into typed content blocks for RN
@@ -75,7 +77,7 @@ class ContentBlockParser(HTMLParser):
 
         # Para state
         self.in_paragraph = False
-        self.segments = []         # list of {"text", "bold", "link"}
+        self.segments = []  # list of {"text", "bold", "link"}
         self.current_text = ""
 
         # Heading state
@@ -95,8 +97,8 @@ class ContentBlockParser(HTMLParser):
         self.link_url = None
 
         # Skip flags
-        self.skip_depth = 0        # for skipping random webflow divs
-        self.is_footer = False     # for skipping footers
+        self.skip_depth = 0  # for skipping random webflow divs
+        self.is_footer = False  # for skipping footers
         self.div_depth = 0
 
     def handle_starttag(self, tag, attrs):
@@ -196,11 +198,13 @@ class ContentBlockParser(HTMLParser):
         if tag in self.HEADING_TAGS and self.in_heading:
             text = clean_text(self.heading_text)
             if text:
-                self.blocks.append({
-                    "type": "heading",
-                    "text": text,
-                    "level": self.heading_level,
-                })
+                self.blocks.append(
+                    {
+                        "type": "heading",
+                        "text": text,
+                        "level": self.heading_level,
+                    }
+                )
             self.in_heading = False
             self.heading_text = ""
             return
@@ -224,11 +228,13 @@ class ContentBlockParser(HTMLParser):
 
         if tag in ("ul", "ol"):
             if self.list_items:
-                self.blocks.append({
-                    "type": "list",
-                    "items": self.list_items,
-                    "ordered": self.list_ordered,
-                })
+                self.blocks.append(
+                    {
+                        "type": "list",
+                        "items": self.list_items,
+                        "ordered": self.list_ordered,
+                    }
+                )
             self.in_list = False
             self.list_items = []
             return
@@ -269,11 +275,13 @@ class ContentBlockParser(HTMLParser):
     def _flush_segment(self):
         # push current_text as a segment with current formatting state
         if self.current_text:
-            self.segments.append({
-                "text": self.current_text,
-                "bold": self.bold_depth > 0,
-                "link": self.link_url,
-            })
+            self.segments.append(
+                {
+                    "text": self.current_text,
+                    "bold": self.bold_depth > 0,
+                    "link": self.link_url,
+                }
+            )
             self.current_text = ""
 
     def _emit_paragraph(self):
@@ -294,11 +302,13 @@ class ContentBlockParser(HTMLParser):
             # preserve leading/trailing spaces for inline flow
             text = text.replace("\u200d", "").replace("\u00a0", " ")
             if text:
-                cleaned_segments.append({
-                    "text": text,
-                    "bold": seg["bold"],
-                    "link": seg["link"],
-                })
+                cleaned_segments.append(
+                    {
+                        "text": text,
+                        "bold": seg["bold"],
+                        "link": seg["link"],
+                    }
+                )
 
         if not cleaned_segments:
             return
@@ -312,17 +322,21 @@ class ContentBlockParser(HTMLParser):
             # simple paragraph
             text = clean_text(full_text)
             if text:
-                self.blocks.append({
-                    "type": "paragraph",
-                    "text": text,
-                    "bold": all_bold,
-                })
+                self.blocks.append(
+                    {
+                        "type": "paragraph",
+                        "text": text,
+                        "bold": all_bold,
+                    }
+                )
         else:
             # Rich paragraph with mixed formatting
-            self.blocks.append({
-                "type": "rich_paragraph",
-                "segments": cleaned_segments,
-            })
+            self.blocks.append(
+                {
+                    "type": "rich_paragraph",
+                    "segments": cleaned_segments,
+                }
+            )
 
     def _flush_paragraph(self):
 
@@ -353,6 +367,7 @@ def parse_html_content(html_chunks: list[str]) -> list[dict]:
 
 
 # Signposting Parser
+
 
 class SignpostingParser(HTMLParser):
     # Extract organisation data from signposting HTML
@@ -429,6 +444,7 @@ def parse_signposting(html_string: str) -> list[dict]:
 
 # Main Transform Pipeline
 
+
 def transform(source_path: str) -> dict:
     # transform the scraped JSON into structured output for frontend
     with open(source_path, "r", encoding="utf-8") as f:
@@ -437,10 +453,19 @@ def transform(source_path: str) -> dict:
     assert data["name"] == "root", f"Expected root node, got {data['name']}"
     categories_raw = data["children"]
 
+    # Remove the contact page before parsing articles
+    contact = {}
+    for i, item in enumerate(categories_raw):
+        if item.get("name", "") == "contact_us":
+            contact = categories_raw.pop(i)
+    contact["main_content"] = parse_html_content(
+        contact.get("main_content", [])
+    )
     output = {
         "categories": [],
         "category_articles": {},
         "articles": {},
+        "contact_us": contact,
     }
 
     seen_slugs = set()
@@ -453,17 +478,21 @@ def transform(source_path: str) -> dict:
         cat_image = category.get("button_img_url", "")
 
         # home screen category
-        output["categories"].append({
-            "id": cat_idx,
-            "slug": cat_slug,
-            "label": cat_label,
-            "image_url": cat_image,
-        })
+        output["categories"].append(
+            {
+                "id": cat_idx,
+                "slug": cat_slug,
+                "label": cat_label,
+                "image_url": cat_image,
+            }
+        )
 
         # articles in this category
         article_summaries = []
 
-        for art_idx, article_wrapper in enumerate(category.get("children", []), start=1):
+        for art_idx, article_wrapper in enumerate(
+            category.get("children", []), start=1
+        ):
             # actual article detail is the first child
             details_list = article_wrapper.get("children", [])
             if not details_list:
@@ -484,21 +513,19 @@ def transform(source_path: str) -> dict:
             article_id = f"{cat_idx}_{art_idx}"
 
             # Parse content
-            content_blocks = parse_html_content(
-                detail.get("main_content", [])
-            )
+            content_blocks = parse_html_content(detail.get("main_content", []))
 
             # Parse signposting
-            signposting = parse_signposting(
-                detail.get("signposting", "")
-            )
+            signposting = parse_signposting(detail.get("signposting", ""))
 
             # article summary for category listing
-            article_summaries.append({
-                "id": article_id,
-                "name": article_name.strip().replace("\u00a0", " "),
-                "slug": article_slug,
-            })
+            article_summaries.append(
+                {
+                    "id": article_id,
+                    "name": article_name.strip().replace("\u00a0", " "),
+                    "slug": article_slug,
+                }
+            )
 
             # full article data
             output["articles"][article_slug] = {
@@ -523,11 +550,14 @@ def transform(source_path: str) -> dict:
 
 # Main
 
+
 def main():
     # get paths
     script_dir = os.path.dirname(os.path.abspath(__file__))
 
-    source_path = os.path.join(script_dir, "scraper_output", "NCSInfoHubArticles.json")
+    source_path = os.path.join(
+        script_dir, "scraper_output", "NCSInfoHubArticles.json"
+    )
     output_path = os.path.join(script_dir, "caddy_serve", "articles.json")
 
     if not os.path.exists(source_path):
@@ -552,7 +582,9 @@ def main():
     with_signposting = sum(
         1 for a in output["articles"].values() if a["signposting"]
     )
-    print(f"\nArticles with signposting: {with_signposting}/{len(output['articles'])}")
+    print(
+        f"\nArticles with signposting: {with_signposting}/{len(output['articles'])}"
+    )
 
 
 if __name__ == "__main__":

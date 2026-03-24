@@ -11,7 +11,12 @@ This is a Python scrapy project to scrape the [NCS Information Hub](https://www.
 - Pull the latest changes to the repo: `git pull`
 - To copy your local repo files to the server, while in the parent directory of the repo, run the following :
 ```sh
-rsync -avhP -e 'ssh -p 2223' --delete --exclude-from='./ncs_infohub/rsync_exclude_list.txt' --chown=api:api-data --chmod=Du=rwx,Dg=rwx,Do=rx,Fu=rwx,Fg=rwx,Fo=rx ./ncs_infohub root@api.nextchapterscotland.org.uk:/home/api/
+rsync -avhP -e 'ssh -p 2223' --delete \
+    --exclude-from='./ncs_infohub/rsync_exclude_list.txt' \
+    --chown=api:api-data \
+    --chmod=Du=rwx,Dg=rwx,Do=rx,Fu=rwx,Fg=rwx,Fo=rx \
+    ./ncs_infohub \
+    root@api.nextchapterscotland.org.uk:/home/api/
 ```
 - If not done already, when prompted, add `api.nextchapterscotland.org.uk` to known hosts.
 - Type in the root password
