@@ -1,3 +1,115 @@
+# SH39 App
+
+Mobile app built with Expo and React Native.
+
+## Quick start (from GitHub to running app)
+
+### 1) Download the project from GitHub
+
+Ask the project owner for the GitHub repository URL, then run:
+
+```bash
+git clone <GITHUB_REPOSITORY_URL>
+```
+
+Example:
+
+```bash
+git clone https://github.com/<org-or-user>/sh39-app.git
+```
+
+Then move into the project:
+
+```bash
+cd sh39-app/frontend
+```
+
+### 2) Install required software (one-time)
+
+1. Install **Node.js 20 LTS** from [nodejs.org](https://nodejs.org/).
+2. Confirm Node and npm are installed:
+
+```bash
+node -v
+npm -v
+```
+
+### 3) Install project dependencies
+
+In `sh39-app/frontend`, run:
+
+```bash
+npm install
+```
+
+### 4) Start the app
+
+In `sh39-app/frontend`, run:
+
+```bash
+npx expo start
+```
+
+Keep this terminal open while testing.
+
+## Test on iPhone (iOS)
+
+1. Install `Expo Go` from the App Store.
+2. Make sure iPhone and laptop are on the same Wi-Fi network.
+3. Start the app on laptop:
+
+```bash
+cd sh39-app/frontend
+npx expo start
+```
+
+4. Open iPhone Camera and scan the QR code from Expo.
+5. Tap the prompt to open in Expo Go.
+
+If Camera does not scan the QR:
+- open Expo Go and use its built-in QR scanner.
+
+## Test on Android
+
+1. Install `Expo Go` from Google Play.
+2. Make sure Android phone and laptop are on the same Wi-Fi network.
+3. Start the app on laptop:
+
+```bash
+cd sh39-app/frontend
+npx expo start
+```
+
+4. Open Expo Go.
+5. Tap `Scan QR Code` and scan the QR from Expo.
+
+## If QR code does not connect
+
+Use tunnel mode:
+
+```bash
+npx expo start --tunnel
+```
+
+## Important compatibility note (Expo SDK 54)
+
+This project currently runs on **Expo SDK 54**.
+
+Expo Go may eventually drop support for SDK 54 once it moves to SDK 55+ only.  
+To avoid test disruptions, turn off automatic app updates on test devices.
+
+### Turn off auto-updates on iPhone
+1. Open `Settings`.
+2. Tap `App Store`.
+3. Under `Automatic Downloads`, turn off `App Updates`.
+
+### Turn off auto-updates on Android
+1. Open `Google Play Store`.
+2. Tap profile icon (top right) -> `Settings`.
+3. Open `Network preferences` -> `Auto-update apps`.
+4. Select `Don't auto-update apps`.
+
+
 # Next Chapter Scotland article scraper & transformer
 ## Purpose
 This is a Python scrapy project to scrape the [NCS Information Hub](https://www.nextchapterscotland.org.uk/information-hub) and convert it to React Native components.
