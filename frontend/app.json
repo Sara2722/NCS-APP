@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "NCS",
+    "slug": "ncs",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "ncs",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "icon": "./assets/icons/logomark.png",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ncs.app",
+      "infoPlist": {
+        "LSApplicationQueriesSchemes": ["http", "https", "mailto", "tel", "sms"]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icons/logomark.png",
+        "backgroundColor": "#FFDD00"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "package": "com.ncs.app"
+    },
+    "web": {
+      "output": "static",
+      "favicon": "./assets/icons/logomark.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/icons/logomark.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#FFDD00",
+          "dark": {
+            "image": "./assets/icons/logomark.png",
+            "backgroundColor": "#1a1a1a"
+          }
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}
