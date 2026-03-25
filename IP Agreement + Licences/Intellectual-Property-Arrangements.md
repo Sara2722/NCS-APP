@@ -69,7 +69,7 @@ No financial compensation is exchanged as part of the IP transfer.
 A copy of both the Discourse GPLv2-or-later licence, GPLv3, and MIT have been added to the repository:  
 [gpl-3.0.txt](gpl-3.0.txt)  
 [Discourse-License.txt](Discourse-License.txt)
-[MIT-License.txt](MIT-License.txt)
+[MIT-License.md](MIT-License.md)
 
 
 ## Submission
